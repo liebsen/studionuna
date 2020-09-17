@@ -1,0 +1,9 @@
+categories
+https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=14
+
+https://sonic.dattalive.com/8634/;
+
+https://sonic.dattalive.com/cp/widgets/player/single/nowplay.php
+rsys  "scv1"
+port  "8634"
+NoCache "1600358895600"

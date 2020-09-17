@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0779e4"/>
+  <meta property="og:title" content="Free Cat Radio" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://freecatradio.com" />
+  <meta property="og:image" content="https://freecatradio.com/img/splash.jpg" />
+  <meta property="og:description" content="Freedom Cats Radio" /> 
+  <link rel="stylesheet" type="text/css" href="/css/app.css" />
+  <link rel="stylesheet" type="text/css" href="/css/animate.css" />
+  <link rel="stylesheet" type="text/css" href="/css/visualizer.css" />
+  <link rel="stylesheet" type="text/css" href="/css/snackbar.css" />
+  <link rel="stylesheet" type="text/css" href="/css/slick.css" />
+  <link rel="stylesheet" type="text/css" href="/css/materialdesignicons.min.css" />
+  <title>Studio Nuna</title>
+</head>
+<body>
+  <div id="loading">
+    <svg class="spinner-container" viewBox="0 0 44 44">
+      <circle class="path" cx="22" cy="22" r="20" fill="none" stroke-width="4"></circle>
+    </svg>
+  </div>
+  <div id="app">
+    <canvas id="canvas" hidden></canvas>
+    <audio id="stream" src="stream.php" crossorigin="anonymous" controls></audio>
+    <div class="foreground">
+      <h1 class="title">Studio Nuna</h1>
+      <span class="icon pointer">
+        <span class="mdi mdi-play-circle" onclick="togglePlay(this)"></span>
+      </span>
+      <h4>Sonando ahora...</h4>
+      <h2 class="nowplaying">...</h2>
+    </div>
+    <div class="social">
+      <a href="https://www.facebook.com/studionuna2020" target="_blank">
+        <span class="icon pointer">
+          <span class="mdi mdi-facebook"></span>
+        </span>
+      </a>
+      <a class="mobile" href="whatsapp://send?phone=+543549522176">
+        <span class="icon pointer">
+          <span class="mdi mdi-whatsapp"></span>
+        </span>
+      </a>
+      <a class="desktop" href="https://web.whatsapp.com/send?phone=+543549522176" target="_blank">
+        <span class="icon pointer">
+          <span class="mdi mdi-whatsapp"></span>
+        </span>
+      </a>
+      <a href="mailto:freecatradio@gmail.com">
+        <span class="icon pointer">
+          <span class="mdi mdi-email-outline"></span>
+        </span>
+      </a>
+    </div>
+  </div>
+  <script src="/js/pwa.js"></script>
+  <script src="/js/status.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/snackbar.js"></script>
+  <script src="/js/visualizer.js"></script>
+  <script src="/js/axios.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/slick.min.js"></script>
+</body>
+</html>

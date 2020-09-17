@@ -1,0 +1,16 @@
+{
+  "name": "StudioNuna",
+  "short_name": "studionuna",
+  "description": "Difusión de contenido",
+  "icons": [
+    {
+      "src": "/img/splash.jpg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "fullscreen",
+  "theme_color": "#0779e4",
+  "background_color": "#0779e4"
+}

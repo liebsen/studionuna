@@ -12,10 +12,10 @@
   <meta property="og:image" content="https://freecatradio.com/img/splash.jpg" />
   <meta property="og:description" content="Freedom Cats Radio" /> 
   <link rel="stylesheet" type="text/css" href="/css/app.css" />
+  <link rel="stylesheet" type="text/css" href="/css/splide.min.css" />
   <link rel="stylesheet" type="text/css" href="/css/animate.css" />
   <link rel="stylesheet" type="text/css" href="/css/visualizer.css" />
   <link rel="stylesheet" type="text/css" href="/css/snackbar.css" />
-  <link rel="stylesheet" type="text/css" href="/css/slick.css" />
   <link rel="stylesheet" type="text/css" href="/css/materialdesignicons.min.css" />
   <title>Studio Nuna</title>
 </head>
@@ -33,7 +33,6 @@
       <span class="icon pointer">
         <span class="mdi mdi-play-circle" onclick="togglePlay(this)"></span>
       </span>
-      <h4>Sonando ahora...</h4>
       <h2 class="nowplaying">...</h2>
     </div>
     <div class="social">
@@ -52,20 +51,25 @@
           <span class="mdi mdi-whatsapp"></span>
         </span>
       </a>
-      <a href="mailto:freecatradio@gmail.com">
+      <a href="mailto:studiosnuna@gmail.com">
         <span class="icon pointer">
           <span class="mdi mdi-email-outline"></span>
         </span>
       </a>
     </div>
   </div>
+  <div class="splide" id="news">
+    <div class="splide__track">
+      <div class="splide__list">
+      </div>
+    </div>
+  </div>
+  <script src="/js/axios.min.js"></script>
+  <script src="/js/splide.min.js"></script>
   <script src="/js/pwa.js"></script>
   <script src="/js/status.js"></script>
   <script src="/js/app.js"></script>
   <script src="/js/snackbar.js"></script>
   <script src="/js/visualizer.js"></script>
-  <script src="/js/axios.min.js"></script>
-  <script src="/js/jquery.min.js"></script>
-  <script src="/js/slick.min.js"></script>
 </body>
 </html>

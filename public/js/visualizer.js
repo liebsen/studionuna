@@ -1,4 +1,4 @@
-var modes = ['bar-graph', 'waveform', 'rgb-bar-graph']
+var modes = ['waveform', 'bar-graph', 'rgb-bar-graph']
 var mode = modes[0]
 
 function visualize(from, source) {

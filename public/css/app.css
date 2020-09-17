@@ -1,16 +1,16 @@
 @font-face {
-    font-family: 'Rounded Elegance';
-    src: url('/fonts/RoundedElegance-Regular.woff2') format('woff2'),
-        url('/fonts/RoundedElegance-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'Rounded Elegance';
+  src: url('/fonts/RoundedElegance-Regular.woff2') format('woff2'),
+      url('/fonts/RoundedElegance-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
-
 
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -27,7 +27,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;        /* for single line flex container */
+  align-items: center;
   align-content: center;
   background-image: url('/img/splash.png');
   background-repeat: no-repeat;
@@ -44,21 +44,21 @@ body {
 .foreground h1 {
   margin-top: 0.75rem;
   margin-bottom: 0;
-  font-size: 5rem;
+  font-size: 4rem;
   text-transform: uppercase;
-  text-shadow: 6px 6px 0 rgba(0,0,0,0.75);
+  text-shadow: 0 0 6px rgba(0,0,0,0.75);
 }
 
 .foreground h2 {
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
-  text-shadow: 3px 3px 0 rgba(0,0,0,0.75);
+  text-shadow: 0 0 3px rgba(0,0,0,0.75);
 }
 
 .foreground h4 {
   margin-top: 0;
-  text-shadow: 2px 2px 0 rgba(0,0,0,0.75);
+  text-shadow: 0 0 2px rgba(0,0,0,0.75);
 }
 
 .foreground .mdi {
@@ -86,6 +86,43 @@ body {
 .foreground .mdi-pause-circle {
   color: #ec0101;
 }
+
+#news {
+  height: 125px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.news-item {
+  position: relative;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height:125px;
+}
+
+.news-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem;
+  padding-bottom: 0;
+  background-color: rgba(0,0,0,0.75);
+}
+
+.news-title h3 {
+  color: white;
+  margin: 0;
+}
+
+.news-title p {
+  font-size: 0.75rem;
+  color: white;
+}
+
 
 .social {
   display: flex;

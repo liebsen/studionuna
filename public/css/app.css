@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Rounded Elegance';
-  src: url('/fonts/RoundedElegance-Regular.woff2') format('woff2'),
-      url('/fonts/RoundedElegance-Regular.woff') format('woff');
+  src: url('fonts/RoundedElegance-Regular.woff2') format('woff2'),
+      url('fonts/RoundedElegance-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -29,7 +29,7 @@ body {
   align-items: center;
   align-content: center;
   background-color: black;
-  background-image: url('/img/splash.png');
+  background-image: url('img/splash.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 500px 500px;

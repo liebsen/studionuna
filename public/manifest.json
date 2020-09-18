@@ -4,7 +4,7 @@
   "description": "Difusión de contenido",
   "icons": [
     {
-      "src": "/img/splash.jpg",
+      "src": "/img/splash.png",
       "sizes": "512x512",
       "type": "image/png"
     }

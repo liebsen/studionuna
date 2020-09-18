@@ -14,14 +14,9 @@
   <link rel="stylesheet" type="text/css" href="/css/app.css" />
   <link rel="stylesheet" type="text/css" href="/css/splide.min.css" />
   <link rel="stylesheet" type="text/css" href="/css/animate.css" />
+  <link rel="stylesheet" type="text/css" href="/css/visualizer.css" />
+  <link rel="stylesheet" type="text/css" href="/css/snackbar.css" />
   <link rel="stylesheet" type="text/css" href="/css/materialdesignicons.min.css" />
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172661957-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'UA-172661957-1');
-  </script>
   <title>Studio Nuna</title>
 </head>
 <body>
@@ -31,7 +26,8 @@
     </svg>
   </div>
   <div id="app">
-    <audio id='stream' controls><source src="https://sonic.dattalive.com/8634/;" type='audio/mpeg'></audio>
+    <canvas id="canvas" hidden></canvas>
+    <audio id='stream' src="https://sonic.dattalive.com/8634/;" type='audio/mpeg' controls></audio>
     <div class="foreground">
       <h1 class="title">Studio Nuna</h1>
       <span class="icon pointer">
@@ -41,16 +37,6 @@
       <h2 class="nowplaying">...</h2>
     </div>
     <div class="social">
-      <a class="mobile" href="whatsapp://send?phone=+543549522176">
-        <span class="icon pointer">
-          <span class="mdi mdi-whatsapp"></span>
-        </span>
-      </a>
-      <a class="desktop" href="https://web.whatsapp.com/send?phone=+543549522176" target="_blank">
-        <span class="icon pointer">
-          <span class="mdi mdi-whatsapp"></span>
-        </span>
-      </a>
       <a href="https://www.facebook.com/studionuna2020" target="_blank">
         <span class="icon pointer">
           <span class="mdi mdi-facebook"></span>
@@ -61,9 +47,14 @@
           <span class="mdi mdi-instagram"></span>
         </span>
       </a>
-      <a href="https://www.youtube.com/channel/UC8wfYCWwvEHLP14OzQufJYw" target="_blank">
+      <a class="mobile" href="whatsapp://send?phone=+543549522176">
         <span class="icon pointer">
-          <span class="mdi mdi-youtube"></span>
+          <span class="mdi mdi-whatsapp"></span>
+        </span>
+      </a>
+      <a class="desktop" href="https://web.whatsapp.com/send?phone=+543549522176" target="_blank">
+        <span class="icon pointer">
+          <span class="mdi mdi-whatsapp"></span>
         </span>
       </a>
       <a href="https://open.spotify.com/show/0jIARfW6bQt8JHugA2eW6x" target="_blank">
@@ -71,6 +62,12 @@
           <span class="mdi mdi-spotify"></span>
         </span>
       </a>
+      <a href="https://www.youtube.com/channel/UC8wfYCWwvEHLP14OzQufJYw" target="_blank">
+        <span class="icon pointer">
+          <span class="mdi mdi-youtube"></span>
+        </span>
+      </a>
+
       <a href="mailto:studiosnuna@gmail.com">
         <span class="icon pointer">
           <span class="mdi mdi-email-outline"></span>
@@ -78,7 +75,7 @@
       </a>
     </div>
   </div>
-  <div class="splide" id="news">
+  <div class="splide animated " id="news">
     <div class="splide__track">
       <div class="splide__list">
       </div>
@@ -88,6 +85,8 @@
   <script src="/js/splide.min.js"></script>
   <script src="/js/pwa.js"></script>
   <script src="/js/status.js"></script>
-  <script src="/js/app.js"></script>
+  <script src="/js/visualizer.js"></script>
+  <script src="/js/app2.js"></script>
+  <script src="/js/snackbar.js"></script>  
 </body>
 </html>

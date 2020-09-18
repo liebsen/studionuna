@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Rounded Elegance';
-  src: url('fonts/RoundedElegance-Regular.woff2') format('woff2'),
-      url('fonts/RoundedElegance-Regular.woff') format('woff');
+  src: url('/fonts/RoundedElegance-Regular.woff2') format('woff2'),
+      url('/fonts/RoundedElegance-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -21,6 +21,16 @@ body {
   /* background: radial-gradient(circle, rgb(149, 149, 149) 0%, rgb(60, 60, 60) 70%, rgb(0, 0, 0) 100%); */
 }
 
+audio {
+  position: fixed;
+  z-index: 90;
+  left: 10px;
+  bottom: -80px;
+  width: calc(100% - 20px);
+  opacity: 0.2;
+  transition: all 0.5s;
+}
+
 #app {
   height: calc(100% - 125px);
   display: flex;
@@ -29,7 +39,7 @@ body {
   align-items: center;
   align-content: center;
   background-color: black;
-  background-image: url('img/splash.png');
+  background-image: url('/img/splash.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 500px 500px;
@@ -110,7 +120,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 1rem;
+  padding: 0.5rem;
   padding-bottom: 0;
   background-color: rgba(0,0,0,0.75);
 }
@@ -121,7 +131,7 @@ body {
 }
 
 .news-title p {
-
+  margin-top: 0;
   font-size: 0.75rem;
   color: white;
 }
@@ -158,10 +168,21 @@ body {
   color: #1877f2;
 }
 
+.social .mdi-instagram {
+  color: #c32aa3;
+}
+
+.social .mdi-spotify {
+  color: #1ed760;
+}
+
+.social .mdi-youtube {
+  color: #ff0000;
+}
+
 .social .mdi-email-outline {
   color: #ff4500;
 }
-
 
 .pointer {
   cursor: pointer;
@@ -264,9 +285,8 @@ body {
   }
 }
 
-@media screen and (max-width:360px), print {
+@media screen and (max-width:440px), print {
   .foreground h1 {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 }
-

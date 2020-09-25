@@ -18,6 +18,10 @@ body {
   font-family: 'Rounded Elegance';
   font-weight: 800;
   color: white;
+  -webkit-font-smoothing: antialiased;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
   /* background: radial-gradient(circle, rgb(149, 149, 149) 0%, rgb(60, 60, 60) 70%, rgb(0, 0, 0) 100%); */
 }
 
@@ -38,7 +42,7 @@ audio {
   justify-content: center;
   align-items: center;
   align-content: center;
-  background-color: black;
+  background-color: rgba(0,0,0,0.75);
   background-image: url('/img/splash.png');
   background-repeat: no-repeat;
   background-position: center;
@@ -55,7 +59,7 @@ audio {
   margin-top: 0.75rem;
   margin-bottom: 0;
   font-size: 4rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
   text-shadow: 0 0 6px rgba(0,0,0,0.75);
 }
 
@@ -107,6 +111,18 @@ audio {
   bottom: 0;
 }
 
+.news-container {
+  transition: all .4s ease-in-out;
+}
+
+.news-container:hover {
+  filter: contrast(140%);
+}
+
+.news-container:hover .news-title h3 {
+  color: yellow;
+}
+
 .news-item {
   position: relative;
   background-repeat: no-repeat;
@@ -128,6 +144,8 @@ audio {
 .news-title h3 {
   color: white;
   margin: 0;
+  transition: all .4s ease-in-out;
+  -webkit-font-smoothing: antialiased;
 }
 
 .news-title p {
@@ -135,7 +153,6 @@ audio {
   font-size: 0.75rem;
   color: white;
 }
-
 
 .social {
   display: flex;
@@ -145,7 +162,7 @@ audio {
 .social .mdi {
   position: relative;
   top: 3px;
-  font-size: 3rem;
+  font-size: 3.25rem;
   text-shadow: 0px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.1s linear;
 }
@@ -168,6 +185,14 @@ audio {
   color: #1877f2;
 }
 
+.social .mdi-wordpress {
+  color: #00749C;
+}
+
+.social .mdi-room-service {
+  color: #ff9900;
+}
+
 .social .mdi-instagram {
   color: #c32aa3;
 }
@@ -178,6 +203,10 @@ audio {
 
 .social .mdi-youtube {
   color: #ff0000;
+}
+
+.social .mdi-chat {
+  color: #ff4500;
 }
 
 .social .mdi-email-outline {
@@ -192,28 +221,24 @@ audio {
 /* spinner */
 
 #loading {
+  display: flex;
+  align-content: center;
+  align-items: center;
   position: fixed;
   top: 0px;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  background-color: #2c3534;
+  background-color: #000000;
 }
 
 .spinner-container {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
   -webkit-animation: rotate 2s linear infinite;
   animation: rotate 2s linear infinite;
   z-index: 2;
   width:100px; height:100px;
   margin: 100px auto;
-  display: block;
-  height: 70%;
 }
 
 .spinner-container .path {
@@ -261,6 +286,19 @@ audio {
   }
 }
 
+/* splide */
+
+.splide__arrow {
+  background: transparent!important;
+  fill: white;
+  width: 3em!important;
+  height: 3em!important;
+}
+
+.splide__arrow svg {
+  width: 3em!important;
+  height: 3em!important;
+}
 /* responsive */
 
 .mobile, .desktop {
@@ -288,5 +326,8 @@ audio {
 @media screen and (max-width:440px), print {
   .foreground h1 {
     font-size: 2.5rem;
+  }
+  .social .mdi {
+    font-size: 2.25rem;
   }
 }

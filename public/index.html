@@ -9,7 +9,7 @@
   <meta property="og:title" content="Studio Nuna" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://studionuna.com.ar" />
-  <meta property="og:image" content="https://studionuna.com.ar/img/splash.jpg" />
+  <meta property="og:image" content="https://studionuna.com.ar/img/share.jpg" />
   <meta property="og:description" content="Difusión de contenido" /> 
   <link rel="stylesheet" type="text/css" href="/css/app.css" />
   <link rel="stylesheet" type="text/css" href="/css/splide.min.css" />
@@ -31,11 +31,11 @@
     </svg>
   </div>
   <div id="app">
-    <audio id='stream' controls><source src="https://sonic.dattalive.com/8634/;" type='audio/mpeg'></audio>
+    <audio id='stream' controls><source src="https://sonic.dattalive.com/8634/;" type="audio/mp3"></audio>
     <div class="foreground">
       <h1 class="title">Studio Nuna</h1>
       <span class="icon pointer">
-        <span class="mdi mdi-play-circle" onclick="togglePlay(this)"></span>
+        <span class="mdi mdi-play-circle" id="playBtn"></span>
       </span>
       <h4>Sonando ahora...</h4>
       <h2 class="nowplaying">...</h2>
@@ -46,36 +46,51 @@
           <span class="mdi mdi-whatsapp"></span>
         </span>
       </a>
-      <a class="desktop" href="https://web.whatsapp.com/send?phone=+543549522176" target="_blank">
+      <a class="desktop" href="https://web.whatsapp.com/send?phone=+543549522176" target="_blank" title="Chat en whatsapp">
         <span class="icon pointer">
           <span class="mdi mdi-whatsapp"></span>
         </span>
       </a>
-      <a href="https://www.facebook.com/studionuna2020" target="_blank">
+      <a href="https://www.facebook.com/studionuna2020" target="_blank" title="Seguinos en Facebook">
         <span class="icon pointer">
           <span class="mdi mdi-facebook"></span>
         </span>
       </a>
-      <a href="https://www.instagram.com/_nuna_studios_/" target="_blank">
+      <a href="https://www.instagram.com/_nuna_studios_/" target="_blank" title="Seguinos en Instagram">
         <span class="icon pointer">
           <span class="mdi mdi-instagram"></span>
         </span>
       </a>
-      <a href="https://www.youtube.com/channel/UC8wfYCWwvEHLP14OzQufJYw" target="_blank">
+      <a href="https://www.youtube.com/channel/UC8wfYCWwvEHLP14OzQufJYw" target="_blank" title="Seguinos en Youtube">
         <span class="icon pointer">
           <span class="mdi mdi-youtube"></span>
         </span>
       </a>
-      <a href="https://open.spotify.com/show/0jIARfW6bQt8JHugA2eW6x" target="_blank">
+      <a href="https://open.spotify.com/show/0jIARfW6bQt8JHugA2eW6x" target="_blank" title="Escuchanos en Spotify">
         <span class="icon pointer">
           <span class="mdi mdi-spotify"></span>
         </span>
       </a>
-      <a href="mailto:studiosnuna@gmail.com">
+      <a href="https://studionuna.com.ar/noticias" target="_blank" title="Nuestro blog">
+        <span class="icon pointer">
+          <span class="mdi mdi-wordpress"></span>
+        </span>
+      </a>
+      <a href="https://studionuna.com.ar/nuna/nuna.html" target="_blank" title="Servicios">
+        <span class="icon pointer">
+          <span class="mdi mdi-room-service"></span>
+        </span>
+      </a>
+      <a href="mailto:studiosnuna@gmail.com" title="Envianos un email">
+        <span class="icon pointer">
+          <span class="mdi mdi-chat"></span>
+        </span>
+      </a>
+      <!--a href="mailto:studiosnuna@gmail.com" title="Envianos un email">
         <span class="icon pointer">
           <span class="mdi mdi-email-outline"></span>
         </span>
-      </a>
+      </a-->
     </div>
   </div>
   <div class="splide" id="news">

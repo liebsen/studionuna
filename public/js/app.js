@@ -1,15 +1,19 @@
 let currentSong = null
 var audio = document.getElementById('stream')
 var playBtn = document.getElementById('playBtn')
-var backgrounds = []
 var currentBackground = null
+var candidateBackground = null
+var applyBackground = null
+var defaultBackground = null
+var currentStyle = null
 
 document.addEventListener('DOMContentLoaded', () => {
   axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=14&_embed').then(res => {
     const news = document.querySelector('.splide__list')
     Object.keys(res.data).forEach(i => {
       const item = res.data[i]
-      news.innerHTML+= `<a href="${item.link}" class="splide__slide news-container" target="_blank"><div class="news-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="news-title"><h3>${item.title.rendered}</h3>${item.excerpt.rendered}</div></div></a>`
+      const excerpt = stripTags(item.excerpt.rendered)
+      news.innerHTML+= `<a href="${item.link}" class="splide__slide news-container" target="_blank"><div class="news-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="news-title"><h3>${item.title.rendered}</h3><p>${excerpt}</p></div></div></a>`
     })
     setTimeout(() => {
       new Splide( '#news', {
@@ -21,6 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
           left : '5rem',
         },
         breakpoints: {
+          '1600': {
+            perPage: 6
+          },
           '1440': {
             perPage: 5
           },
@@ -48,28 +55,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         nowPlaying()
         autoPlay()
-        getBackgrounds()
+        rotateBackgrounds()
 
         setTimeout(() => {
           document.getElementById('loading').remove()
         }, 500)
 
-        setInterval(secondLoop, 10000)
+        setInterval(nowPlaying, 10000)
+        setInterval(rotateBackgrounds, 60000)
       }
     }, 500)
   })
 })
 
 togglePlay = () => {
-  if (playBtn.classList.contains('mdi-play-circle')) {
-    playBtn.classList.remove('mdi-play-circle')
-    playBtn.classList.add('mdi-pause-circle')
+  if (!playBtn.classList.contains('is-playing')) {
+    playBtn.classList.add('is-playing')
     audio.play()
   } else {
     audio.pause()
     audio.currentTime = 0
-    playBtn.classList.remove('mdi-pause-circle')
-    playBtn.classList.add('mdi-play-circle')
+    playBtn.classList.remove('is-playing')
   }
 }
 
@@ -81,8 +87,7 @@ autoPlay = () => {
   var promise = audio.play();
   if( typeof promise !== 'undefined' ) {
     promise.then(function() {
-      playBtn.classList.remove('mdi-play-circle')
-      playBtn.classList.add('mdi-pause-circle')
+      playBtn.classList.add('is-playing')
     }).catch(function(e) {
       // console.log('[AUTOPLAY-ERROR]', e)
     });
@@ -98,36 +103,74 @@ nowPlaying = () => {
   })  
 }
 
-getBackgrounds = () => {
-  axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed').then(res => {
-    Object.keys(res.data).forEach(i => {
-      backgrounds.push({
-        range: res.data[i].title.rendered,
-        background: res.data[i]._embedded['wp:featuredmedia'][0].source_url
-      })
-    })
-  })
-  rotateBackgrounds()
-}
-
 rotateBackgrounds = () => {
+  const div = document.querySelector('.background')
+
   axios.get('/localtime.php').then(res => {
-    const time = res.data.split(':').join('')
-    backgrounds.map(item => {
-      const range = item.range.split('-')
-      const from = range[0].replace(':', '')
-      const to = range[1].replace(':', '')
-      if (time >= from && time <= to) {
-        if (currentBackground !== item.background) {
-          var body = document.getElementsByTagName('body')[0]
-          body.style.backgroundImage = `url(${item.background})`
+    axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed').then(res2 => {
+      Object.keys(res2.data).forEach(i => {
+        let item = res2.data[i]
+        const serverTime = res.data
+        const weekDay = serverTime.split(' ')[0]
+        const dayTime = serverTime.split(' ')[1]
+        const time = parseInt(dayTime.split(':').join(''))
+        const background = item._embedded['wp:featuredmedia'][0].source_url
+
+        if (item.title.rendered === 'default') {
+          defaultBackground = background
+          currentStyle = stripTags(item.content.rendered)
+        } else {
+          const itemData = item.title.rendered.split('/')
+          const itemHourRange = itemData[1].split('-')
+          const itemWeekDays = itemData[0].split(',')
+
+          if (itemWeekDays.includes(weekDay)) {
+            let from = parseInt(itemHourRange[0].replace(':', ''))
+            let to = parseInt(itemHourRange[1].replace(':', ''))
+
+            if (to < from) {
+              if (time >= to) {
+                to+= from + 100
+              } else {
+                from= 0
+              }
+            }
+
+            if (time >= from && time <= to) {
+              candidateBackground = background
+              currentStyle = stripTags(item.content.rendered)
+            }
+          }
         }
+      })
+
+      /* check results and proceed to apply */
+      if (candidateBackground) {
+        applyBackground = candidateBackground
+      } else {
+        applyBackground = defaultBackground
       }
+
+      if (applyBackground && currentBackground !== applyBackground) {
+        div.classList.remove('animated', 'fadeOut', 'fadeIn', 'delay')
+        div.classList.add('animated', 'fadeOut')
+        setTimeout(() => {
+          if (currentStyle) {
+            div.style = currentStyle
+          }
+          div.style.backgroundImage = `url(${applyBackground})`
+        }, 1000)
+        setTimeout(() => {
+          div.classList.remove('animated', 'fadeOut', 'fadeIn', 'delay')
+          div.classList.add('animated', 'fadeIn', 'delay')
+        }, 5000)
+        currentBackground = applyBackground
+      }
+      candidateBackground = null
     })
   })
 }
 
-secondLoop = () => {
-  rotateBackgrounds() 
-  nowPlaying()
+stripTags = str => {
+  return str.replace(/(<([^>]+)>)/ig, '')
 }

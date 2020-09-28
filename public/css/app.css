@@ -16,7 +16,6 @@ html, body {
 body {
   background-color: black;
   font-family: 'Rounded Elegance';
-  font-weight: 800;
   color: white;
   -webkit-font-smoothing: antialiased;
   /* background: radial-gradient(circle, rgb(149, 149, 149) 0%, rgb(60, 60, 60) 70%, rgb(0, 0, 0) 100%); */
@@ -83,17 +82,19 @@ audio {
   margin-left: auto;
   margin-right: auto;
   margin-top: 0;
+  padding-left: 1rem;
+  padding-right: 1rem;
   text-shadow: 0 0 3px rgba(0,0,0,0.75);
 }
 
-.foreground h4 {
+.foreground h5 {
   margin-top: 0;
   margin-bottom: 0;
   text-shadow: 0 0 2px rgba(0,0,0,0.75);
 }
 
 #playBtn {
-  background-color: #79d70f;
+  background-color: #ec0101;
   top: 4px;
   font-size: 8rem;
   position: relative;
@@ -111,7 +112,7 @@ audio {
 }
 
 #playBtn.is-playing {
-  background-color: #ec0101;
+  background-color: #79d70f;
 }
 
 #playBtn .mdi-power {
@@ -354,7 +355,19 @@ audio {
   .foreground h1 {
     font-size: 2.5rem;
   }
+  .foreground h2 {
+    font-size: 1.25rem;
+  }
   .social .mdi {
     font-size: 2.25rem;
+  }
+  #playBtn {
+    font-size: 4.5rem;
+    border-radius: 80px;
+    width: 80px;
+    height: 80px;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    line-height: 80px;
   }
 }

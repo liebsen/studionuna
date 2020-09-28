@@ -2,7 +2,10 @@ let currentSong = null
 var audio = document.getElementById('stream')
 var playBtn = document.getElementById('playBtn')
 var currentBackground = null
-var candidateBackground = null
+var programTitle = null
+var comingSoon = null
+var comingSoonPreviewInterval = 30
+var programBackground = null
 var applyBackground = null
 var defaultBackground = null
 var currentStyle = null
@@ -97,7 +100,8 @@ autoPlay = () => {
 nowPlaying = () => {
   axios.get('nowplaying.php').then(res => {
     if (currentSong !== res.data) {
-      document.querySelector('.nowplaying').innerHTML = decodeURIComponent(res.data)
+      const headphones = '<span class="mdi mdi-headphones"></span> '
+      document.querySelector('.nowplaying').innerHTML = headphones + decodeURIComponent(res.data)
       currentSong = res.data
     }
   })  
@@ -105,49 +109,63 @@ nowPlaying = () => {
 
 rotateBackgrounds = () => {
   const div = document.querySelector('.background')
-
   axios.get('/localtime.php').then(res => {
     axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed').then(res2 => {
       Object.keys(res2.data).forEach(i => {
         let item = res2.data[i]
+        let from = 0
+        let to = 0
         const serverTime = res.data
         const weekDay = serverTime.split(' ')[0]
         const dayTime = serverTime.split(' ')[1]
         const time = parseInt(dayTime.split(':').join(''))
         const background = item._embedded['wp:featuredmedia'][0].source_url
+        const itemData = item.title.rendered.split('/')
+        const itemType = parseInt(itemData[0])
+        const checkHour = itemData[1]
+        if (checkHour) {
+          const itemHourRange = itemData[1].split('-')  
+          from = parseInt(itemHourRange[0].replace(':', ''))
+          to = parseInt(itemHourRange[1].replace(':', ''))
 
-        if (item.title.rendered === 'default') {
-          defaultBackground = background
-          currentStyle = stripTags(item.content.rendered)
-        } else {
-          const itemData = item.title.rendered.split('/')
-          const itemHourRange = itemData[1].split('-')
-          const itemWeekDays = itemData[0].split(',')
-
-          if (itemWeekDays.includes(weekDay)) {
-            let from = parseInt(itemHourRange[0].replace(':', ''))
-            let to = parseInt(itemHourRange[1].replace(':', ''))
-
-            if (to < from) {
-              if (time >= to) {
-                to+= from + 100
-              } else {
-                from= 0
-              }
+          if (to < from) {
+            if (time >= to) {
+              to+= from + 100
+            } else {
+              from= 0
             }
-
+          }
+        }
+        
+        if (itemType) {
+          const itemWeekDays = itemData[0].split(',')
+          if (checkHour && itemWeekDays.includes(weekDay)) {
             if (time >= from && time <= to) {
-              candidateBackground = background
+              /* active program */
+              programBackground = background
+              currentStyle = stripTags(item.content.rendered)
+              programTitle = stripTags(item.excerpt.rendered)
+            }
+          }
+        } else {
+          /* defaults */
+          if (checkHour) {
+            if (time >= from && time <= to) {
+              defaultBackground = background
               currentStyle = stripTags(item.content.rendered)
             }
+          } else {
+            defaultBackground = background
+            currentStyle = stripTags(item.content.rendered)
           }
         }
       })
 
       /* check results and proceed to apply */
-      if (candidateBackground) {
-        applyBackground = candidateBackground
+      if (programBackground) {
+        applyBackground = programBackground
       } else {
+        programTitle = null
         applyBackground = defaultBackground
       }
 
@@ -166,7 +184,7 @@ rotateBackgrounds = () => {
         }, 5000)
         currentBackground = applyBackground
       }
-      candidateBackground = null
+      programBackground = null
     })
   })
 }

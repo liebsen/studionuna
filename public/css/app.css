@@ -85,12 +85,27 @@ audio {
   padding-left: 1rem;
   padding-right: 1rem;
   text-shadow: 0 0 3px rgba(0,0,0,0.75);
+  min-height: 3rem;
 }
 
 .foreground h5 {
   margin-top: 0;
   margin-bottom: 0;
   text-shadow: 0 0 2px rgba(0,0,0,0.75);
+}
+
+.nowplaying {
+  color: white;
+}
+
+.nowprogram {
+  color: white;
+  display: none;
+}
+
+.comingsoon {
+  color: #fddb3a;
+  display: none;
 }
 
 #playBtn {

@@ -4,14 +4,19 @@ var playBtn = document.getElementById('playBtn')
 var currentBackground = null
 var programTitle = null
 var comingSoon = null
-var comingSoonPreviewInterval = 30
+var comingSoonPreviewInterval = 15
 var programBackground = null
 var applyBackground = null
+var applyStyle = null
+var programStyle = null
+var defaultStyle = null
 var defaultBackground = null
 var currentStyle = null
+var programActive = false
+var announcing = false
 
 document.addEventListener('DOMContentLoaded', () => {
-  axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=14&_embed').then(res => {
+  axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=14&_embed&per_page=100').then(res => {
     const news = document.querySelector('.splide__list')
     Object.keys(res.data).forEach(i => {
       const item = res.data[i]
@@ -52,9 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } ).mount();
       if (document.getElementById('loading')) {
-        document.getElementById('app').classList.add('animated', 'fadeIn', 'delay')
-        document.getElementById('loading').classList.add('animated', 'fadeOut')
-        document.getElementById('news').classList.add('animated', 'fadeInUp', 'delay2')
+        document.getElementById('app').classList.add('fadeIn', 'delay')
+        document.querySelector('.social').classList.add('fadeIn', 'delay3')
+        document.getElementById('loading').classList.add('fadeOut')
+        document.getElementById('news').classList.add('fadeInUp', 'delay2')
 
         nowPlaying()
         autoPlay()
@@ -98,65 +104,81 @@ autoPlay = () => {
 }
 
 nowPlaying = () => {
-  axios.get('nowplaying.php').then(res => {
-    if (currentSong !== res.data) {
-      const headphones = '<span class="mdi mdi-headphones"></span> '
-      document.querySelector('.nowplaying').innerHTML = headphones + decodeURIComponent(res.data)
-      currentSong = res.data
-    }
-  })  
+  if (!announcing) {
+    axios.get('nowplaying.php').then(res => {
+      if (currentSong !== res.data) {
+        const nowplaying = document.querySelector('.nowplaying')
+        const headphones = '<span class="mdi mdi-headphones"></span> '
+        nowplaying.classList.remove('fadeInUp', 'fadeOutUp')
+        nowplaying.classList.add('fadeOutUp')
+        currentSong = res.data
+        setTimeout(() => {
+          nowplaying.classList.remove('fadeInUp', 'fadeOutUp')
+          nowplaying.innerHTML = headphones + decodeURIComponent(res.data)
+          nowplaying.classList.add('fadeInUp')
+        }, 1000)
+      }
+    })
+  }
 }
 
 rotateBackgrounds = () => {
   const div = document.querySelector('.background')
   axios.get('/localtime.php').then(res => {
-    axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed').then(res2 => {
+    const serverTime = res.data
+    const weekDay = serverTime.n
+    // const dayTime = serverTime.split(' ')[1]
+    const time = parseInt(`${serverTime.h}${serverTime.i}`)
+    const date = new Date(serverTime.y, serverTime.m, serverTime.d, serverTime.h, serverTime.i)
+
+    axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed&per_page=100').then(res2 => {
       Object.keys(res2.data).forEach(i => {
         let item = res2.data[i]
-        let from = 0
-        let to = 0
-        const serverTime = res.data
-        const weekDay = serverTime.split(' ')[0]
-        const dayTime = serverTime.split(' ')[1]
-        const time = parseInt(dayTime.split(':').join(''))
         const background = item._embedded['wp:featuredmedia'][0].source_url
         const itemData = item.title.rendered.split('/')
-        const itemType = parseInt(itemData[0])
-        const checkHour = itemData[1]
-        if (checkHour) {
-          const itemHourRange = itemData[1].split('-')  
-          from = parseInt(itemHourRange[0].replace(':', ''))
-          to = parseInt(itemHourRange[1].replace(':', ''))
+        const itemProgram = parseInt(itemData[0])
+        const itemHourRange = itemData[1].split('-')  
+        let from = parseInt(itemHourRange[0].replace(':', ''))
+        let to = parseInt(itemHourRange[1].replace(':', ''))
 
-          if (to < from) {
-            if (time >= to) {
-              to+= from + 100
-            } else {
-              from= 0
-            }
+        if (to < from) {
+          if (time >= to) {
+            to+= from + 100
+          } else {
+            from= 0
           }
         }
-        
-        if (itemType) {
-          const itemWeekDays = itemData[0].split(',')
-          if (checkHour && itemWeekDays.includes(weekDay)) {
-            if (time >= from && time <= to) {
-              /* active program */
+        if (itemProgram) {
+          /* programs */
+          let itemWeekDays = itemData[0].split(',')
+
+          if (itemWeekDays.includes(weekDay)) {
+
+            let programLimit = new Date(serverTime.y, serverTime.m, serverTime.d)
+            programLimit.setHours(itemHourRange[0].split(':')[0])
+            programLimit.setMinutes(itemHourRange[0].split(':')[1] - comingSoonPreviewInterval)
+            const comingSoonLimit = parseInt(`${programLimit.getHours()}${programLimit.getMinutes()}`)
+
+            let programStarts = new Date(serverTime.y, serverTime.m, serverTime.d)
+            programStarts.setHours(itemHourRange[0].split(':')[0])
+            programStarts.setMinutes(itemHourRange[0].split(':')[1])
+
+            if (time > comingSoonLimit && time < from) {
+              const diff = programStarts.getTime() - date.getTime()
+              const min = Math.round(diff / 60000)
+              comingSoon = stripTags(item.excerpt.rendered)
+              comingSoon+= `(en ${min}m)`
+            }
+            if (time >= from && time <= to) { /* active program */
               programBackground = background
-              currentStyle = stripTags(item.content.rendered)
+              programStyle = stripTags(item.content.rendered)
               programTitle = stripTags(item.excerpt.rendered)
             }
           }
-        } else {
-          /* defaults */
-          if (checkHour) {
-            if (time >= from && time <= to) {
-              defaultBackground = background
-              currentStyle = stripTags(item.content.rendered)
-            }
-          } else {
+        } else { /* defaults */          
+          if (time >= from && time <= to || from === to) {
             defaultBackground = background
-            currentStyle = stripTags(item.content.rendered)
+            defaultStyle = stripTags(item.content.rendered)
           }
         }
       })
@@ -164,29 +186,85 @@ rotateBackgrounds = () => {
       /* check results and proceed to apply */
       if (programBackground) {
         applyBackground = programBackground
+        applyStyle = programStyle
+        programActive = true
+        announcing = true
       } else {
-        programTitle = null
         applyBackground = defaultBackground
+        applyStyle = defaultStyle
+        programActive = false
+        announcing = false
       }
 
       if (applyBackground && currentBackground !== applyBackground) {
-        div.classList.remove('animated', 'fadeOut', 'fadeIn', 'delay')
-        div.classList.add('animated', 'fadeOut')
+        div.classList.remove('fadeOut', 'fadeIn', 'delay')
+        div.classList.add('fadeOut')
+        div.style = ''
         setTimeout(() => {
-          if (currentStyle) {
-            div.style = currentStyle
+          if (applyStyle) {
+            div.style = applyStyle
           }
           div.style.backgroundImage = `url(${applyBackground})`
         }, 1000)
         setTimeout(() => {
-          div.classList.remove('animated', 'fadeOut', 'fadeIn', 'delay')
-          div.classList.add('animated', 'fadeIn', 'delay')
+          div.classList.remove('fadeOut', 'fadeIn', 'delay')
+          div.classList.add('fadeIn', 'delay')
         }, 5000)
         currentBackground = applyBackground
       }
+
+      announceProgram(programTitle, comingSoon)
+
       programBackground = null
+      defaultBackground = null
+      programTitle = null
+      comingSoon = null
     })
   })
+}
+
+announceProgram = (current, coming) => {
+  const nowplaying = document.querySelector('.nowplaying')
+  const comingsoon = document.querySelector('.comingsoon')
+  const nowprogram = document.querySelector('.nowprogram')
+
+  nowplaying.style.display = 'block'
+  comingsoon.innerHTML = ''
+  comingsoon.style.display = 'none'
+  nowprogram.innerHTML = ''
+  nowprogram.style.display = 'none'
+
+  if (current) {
+    nowprogram.classList.remove('fadeOutUp', 'fadeInUp')
+    nowprogram.innerHTML = `<span class="mdi mdi-microphone-variant"></span> ${current}`
+    nowplaying.style.display = 'none'
+    nowprogram.style.display = 'block'
+    nowprogram.classList.add('fadeInUp')
+  } 
+
+  if (coming) {
+    announcing = true
+    comingsoon.classList.remove('fadeOutUp', 'fadeInUp')
+    comingsoon.innerHTML = `<span class="mdi mdi-clock-check-outline"></span> ${coming}`
+    comingsoon.style.display = 'block'
+    comingsoon.classList.add('fadeInUp')
+    nowplaying.style.display = 'none'
+    nowprogram.style.display = 'none'
+
+    setTimeout(() => {
+      comingsoon.classList.remove('fadeInUp')
+      comingsoon.classList.add('fadeOutUp')
+      setTimeout(() => {
+        if (programActive) {
+          nowprogram.style.display = 'block'
+        } else {
+          nowplaying.style.display = 'block'  
+        }        
+        comingsoon.style.display = 'none'
+        announcing = false
+      }, 1000)
+    }, 5000)    
+  } 
 }
 
 stripTags = str => {

@@ -58,22 +58,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } ).mount();
       if (document.getElementById('loading')) {
-        document.getElementById('app').classList.add('fadeIn', 'delay')
+        document.getElementById('app').classList.add('fadeIn')
         document.getElementById('loading').classList.add('fadeOut')
-        document.getElementById('news').classList.add('fadeInUp', 'delay2')
-        document.querySelector('.social').classList.add('fadeIn', 'delay3')
+        document.getElementById('news').classList.add('fadeInUp')
+        document.querySelector('.social').classList.add('fadeIn')
 
         nowPlaying()
         autoPlay()
-        rotateBackgrounds()
-        updateProgramObject()
+        updateProgramObject().then(data => {
+          programObject = data
+          rotateBackgrounds()
+        })
 
         setTimeout(() => {
           document.getElementById('loading').remove()
         }, 500)
 
         setInterval(() => {
-          updateProgramObject()
+          updateProgramObject().then(data => {
+            programObject = data
+          })
         }, 60000 * 60)
 
         setInterval(nowPlaying, 10000)
@@ -103,9 +107,9 @@ autoPlay = () => {
   var promise = audio.play()
   const app = document.getElementById('app')
   if( typeof promise !== 'undefined' ) {
-    promise.then(function() {
+    promise.then(() => {
       app.classList.add('is-playing')
-    }).catch(function(e) {
+    }).catch(e => {
       // console.log('[AUTOPLAY-ERROR]', e)
     });
   }
@@ -205,7 +209,7 @@ rotateBackgrounds = () => {
     }
 
     if (applyBackground && currentBackground !== applyBackground) {
-      div.classList.remove('fadeOut', 'fadeIn', 'delay')
+      div.classList.remove('fadeOut', 'fadeIn')
       div.classList.add('fadeOut')
       div.style = ''
       setTimeout(() => {
@@ -215,8 +219,8 @@ rotateBackgrounds = () => {
         div.style.backgroundImage = `url(${applyBackground})`
       }, 1000)
       setTimeout(() => {
-        div.classList.remove('fadeOut', 'fadeIn', 'delay')
-        div.classList.add('fadeIn', 'delay')
+        div.classList.remove('fadeOut', 'fadeIn')
+        div.classList.add('fadeIn')
       }, 5000)
       currentBackground = applyBackground
     }
@@ -275,10 +279,10 @@ announceProgram = (current, coming) => {
 }
 
 updateProgramObject = () => {
-  axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed&per_page=100').then(res => {
-    if (res.data) {
-      programObject = res.data
-    }
+  return new Promise(next => {
+    return axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed&per_page=100').then(res => {
+      next(res.data)
+    })
   })
 }
 

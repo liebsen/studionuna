@@ -1,6 +1,7 @@
 let currentSong = null
 var audio = document.getElementById('stream')
 var playBtn = document.getElementById('playBtn')
+var programObject = {}
 var currentBackground = null
 var programTitle = null
 var comingSoon = null
@@ -58,17 +59,22 @@ document.addEventListener('DOMContentLoaded', () => {
       } ).mount();
       if (document.getElementById('loading')) {
         document.getElementById('app').classList.add('fadeIn', 'delay')
-        document.querySelector('.social').classList.add('fadeIn', 'delay3')
         document.getElementById('loading').classList.add('fadeOut')
         document.getElementById('news').classList.add('fadeInUp', 'delay2')
+        document.querySelector('.social').classList.add('fadeIn', 'delay3')
 
         nowPlaying()
         autoPlay()
         rotateBackgrounds()
+        updateProgramObject()
 
         setTimeout(() => {
           document.getElementById('loading').remove()
         }, 500)
+
+        setInterval(() => {
+          updateProgramObject()
+        }, 60000 * 60)
 
         setInterval(nowPlaying, 10000)
         setInterval(rotateBackgrounds, 60000)
@@ -78,13 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 togglePlay = () => {
-  if (!playBtn.classList.contains('is-playing')) {
-    playBtn.classList.add('is-playing')
+  const app = document.getElementById('app')
+  if (!app.classList.contains('is-playing')) {
+    app.classList.add('is-playing')
     audio.play()
   } else {
     audio.pause()
     audio.currentTime = 0
-    playBtn.classList.remove('is-playing')
+    app.classList.remove('is-playing')
   }
 }
 
@@ -93,10 +100,11 @@ playBtn.onclick = () => {
 }
 
 autoPlay = () => {
-  var promise = audio.play();
+  var promise = audio.play()
+  const app = document.getElementById('app')
   if( typeof promise !== 'undefined' ) {
     promise.then(function() {
-      playBtn.classList.add('is-playing')
+      app.classList.add('is-playing')
     }).catch(function(e) {
       // console.log('[AUTOPLAY-ERROR]', e)
     });
@@ -131,95 +139,94 @@ rotateBackgrounds = () => {
     const time = parseInt(`${serverTime.h}${serverTime.i}`)
     const date = new Date(serverTime.y, serverTime.m, serverTime.d, serverTime.h, serverTime.i)
 
-    axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed&per_page=100').then(res2 => {
-      Object.keys(res2.data).forEach(i => {
-        let item = res2.data[i]
-        const background = item._embedded['wp:featuredmedia'][0].source_url
-        const itemData = item.title.rendered.split('/')
-        const itemProgram = parseInt(itemData[0])
-        const itemHourRange = itemData[1].split('-')  
-        let from = parseInt(itemHourRange[0].replace(':', ''))
-        let to = parseInt(itemHourRange[1].replace(':', ''))
+    Object.keys(programObject).forEach(i => {
+      let item = programObject[i]
+      const background = item._embedded['wp:featuredmedia'][0].source_url
+      const itemData = item.title.rendered.split('/')
+      const itemProgram = parseInt(itemData[0])
+      const itemHourRange = itemData[1].split('-')  
+      let from = parseInt(itemHourRange[0].replace(':', ''))
+      let to = parseInt(itemHourRange[1].replace(':', ''))
 
-        if (to < from) {
-          if (time >= to) {
-            to+= from + 100
-          } else {
-            from= 0
-          }
+      if (to < from) {
+        if (time >= to) {
+          to+= from + 100
+        } else {
+          from= 0
         }
-        if (itemProgram) {
-          /* programs */
-          let itemWeekDays = itemData[0].split(',')
-
-          if (itemWeekDays.includes(weekDay)) {
-
-            let programLimit = new Date(serverTime.y, serverTime.m, serverTime.d)
-            programLimit.setHours(itemHourRange[0].split(':')[0])
-            programLimit.setMinutes(itemHourRange[0].split(':')[1] - comingSoonPreviewInterval)
-            const comingSoonLimit = parseInt(`${programLimit.getHours()}${programLimit.getMinutes()}`)
-
-            let programStarts = new Date(serverTime.y, serverTime.m, serverTime.d)
-            programStarts.setHours(itemHourRange[0].split(':')[0])
-            programStarts.setMinutes(itemHourRange[0].split(':')[1])
-
-            if (time > comingSoonLimit && time < from) {
-              const diff = programStarts.getTime() - date.getTime()
-              const min = Math.round(diff / 60000)
-              comingSoon = stripTags(item.excerpt.rendered)
-              comingSoon+= `(en ${min}m)`
-            }
-            if (time >= from && time <= to) { /* active program */
-              programBackground = background
-              programStyle = stripTags(item.content.rendered)
-              programTitle = stripTags(item.excerpt.rendered)
-            }
-          }
-        } else { /* defaults */          
-          if (time >= from && time <= to || from === to) {
-            defaultBackground = background
-            defaultStyle = stripTags(item.content.rendered)
-          }
-        }
-      })
-
-      /* check results and proceed to apply */
-      if (programBackground) {
-        applyBackground = programBackground
-        applyStyle = programStyle
-        programActive = true
-        announcing = true
-      } else {
-        applyBackground = defaultBackground
-        applyStyle = defaultStyle
-        programActive = false
-        announcing = false
       }
 
-      if (applyBackground && currentBackground !== applyBackground) {
-        div.classList.remove('fadeOut', 'fadeIn', 'delay')
-        div.classList.add('fadeOut')
-        div.style = ''
-        setTimeout(() => {
-          if (applyStyle) {
-            div.style = applyStyle
+      if (itemProgram) {
+        /* programs */
+        let itemWeekDays = itemData[0].split(',')
+
+        if (itemWeekDays.includes(weekDay)) {
+
+          let programLimit = new Date(serverTime.y, serverTime.m, serverTime.d)
+          programLimit.setHours(itemHourRange[0].split(':')[0])
+          programLimit.setMinutes(itemHourRange[0].split(':')[1] - comingSoonPreviewInterval)
+          const comingSoonLimit = parseInt(`${programLimit.getHours()}${programLimit.getMinutes()}`)
+
+          let programStarts = new Date(serverTime.y, serverTime.m, serverTime.d)
+          programStarts.setHours(itemHourRange[0].split(':')[0])
+          programStarts.setMinutes(itemHourRange[0].split(':')[1])
+
+          if (time >= comingSoonLimit && time < from) {
+            const diff = programStarts.getTime() - date.getTime()
+            const min = Math.round(diff / 60000)
+            comingSoon = stripTags(item.excerpt.rendered)
+            comingSoon+= `(en ${min}m)`
           }
-          div.style.backgroundImage = `url(${applyBackground})`
-        }, 1000)
-        setTimeout(() => {
-          div.classList.remove('fadeOut', 'fadeIn', 'delay')
-          div.classList.add('fadeIn', 'delay')
-        }, 5000)
-        currentBackground = applyBackground
+          if (time >= from && time <= to) { /* active program */
+            programBackground = background
+            programStyle = stripTags(item.content.rendered)
+            programTitle = stripTags(item.excerpt.rendered)
+          }
+        }
+      } else { /* defaults */          
+        if (time >= from && time <= to || from === to) {
+          defaultBackground = background
+          defaultStyle = stripTags(item.content.rendered)
+        }
       }
-
-      announceProgram(programTitle, comingSoon)
-
-      programBackground = null
-      defaultBackground = null
-      programTitle = null
-      comingSoon = null
     })
+
+    /* check results and proceed to apply */
+    if (programBackground) {
+      applyBackground = programBackground
+      applyStyle = programStyle
+      programActive = true
+      announcing = true
+    } else {
+      applyBackground = defaultBackground
+      applyStyle = defaultStyle
+      programActive = false
+      announcing = false
+    }
+
+    if (applyBackground && currentBackground !== applyBackground) {
+      div.classList.remove('fadeOut', 'fadeIn', 'delay')
+      div.classList.add('fadeOut')
+      div.style = ''
+      setTimeout(() => {
+        if (applyStyle) {
+          div.style = applyStyle
+        }
+        div.style.backgroundImage = `url(${applyBackground})`
+      }, 1000)
+      setTimeout(() => {
+        div.classList.remove('fadeOut', 'fadeIn', 'delay')
+        div.classList.add('fadeIn', 'delay')
+      }, 5000)
+      currentBackground = applyBackground
+    }
+
+    announceProgram(programTitle, comingSoon)
+
+    programBackground = null
+    defaultBackground = null
+    programTitle = null
+    comingSoon = null
   })
 }
 
@@ -265,6 +272,14 @@ announceProgram = (current, coming) => {
       }, 1000)
     }, 5000)    
   } 
+}
+
+updateProgramObject = () => {
+  axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=18&_embed&per_page=100').then(res => {
+    if (res.data) {
+      programObject = res.data
+    }
+  })
 }
 
 stripTags = str => {

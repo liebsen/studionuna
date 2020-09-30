@@ -61,6 +61,11 @@ audio {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
+  opacity: 0.25;
+}
+
+#app.is-playing .background {
+  opacity: 1;
 }
 
 .foreground {
@@ -126,7 +131,7 @@ audio {
   line-height: 130px;
 }
 
-#playBtn.is-playing {
+#app.is-playing #playBtn {
   background-color: #79d70f;
 }
 
@@ -355,6 +360,15 @@ audio {
   .desktop {
     display: none;
   }
+  #playBtn {
+    font-size: 4.5rem;
+    border-radius: 80px;
+    width: 80px;
+    height: 80px;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    line-height: 80px;
+  }
 }
 
 @media screen and (min-width:769px), print {
@@ -376,13 +390,19 @@ audio {
   .social .mdi {
     font-size: 2.25rem;
   }
-  #playBtn {
-    font-size: 4.5rem;
-    border-radius: 80px;
-    width: 80px;
-    height: 80px;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
-    line-height: 80px;
+}
+
+@media screen and (max-height:480px), print {
+  #app {
+    height: 100%;
+  }
+  #news {
+    display: none;    
+  }
+  .background {
+    height: 100%; 
+  }
+  .foreground h2 {
+    min-height: auto;
   }
 }

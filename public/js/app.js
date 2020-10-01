@@ -246,24 +246,24 @@ announceProgram = (current, coming) => {
   nowprogram.style.display = 'none'
 
   if (current) {
-    nowprogram.classList.remove('fadeOutUp', 'fadeInUp')
+    nowprogram.classList.remove('fadeOutUp', 'pulse')
     nowprogram.innerHTML = `<span class="mdi mdi-microphone-variant"></span> ${current}`
     nowplaying.style.display = 'none'
     nowprogram.style.display = 'block'
-    nowprogram.classList.add('fadeInUp')
+    nowprogram.classList.add('pulse')
   } 
 
   if (coming) {
     announcing = true
-    comingsoon.classList.remove('fadeOutUp', 'fadeInUp')
+    comingsoon.classList.remove('fadeOutUp', 'pulse')
     comingsoon.innerHTML = `<span class="mdi mdi-clock-check-outline"></span> ${coming}`
     comingsoon.style.display = 'block'
-    comingsoon.classList.add('fadeInUp')
+    comingsoon.classList.add('pulse')
     nowplaying.style.display = 'none'
     nowprogram.style.display = 'none'
 
     setTimeout(() => {
-      comingsoon.classList.remove('fadeInUp')
+      comingsoon.classList.remove('pulse')
       comingsoon.classList.add('fadeOutUp')
       setTimeout(() => {
         if (programActive) {

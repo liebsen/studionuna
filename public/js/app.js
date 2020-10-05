@@ -15,6 +15,7 @@ let defaultStyle = null
 let defaultBackground = null
 let currentStyle = null
 let programActive = false
+let programProgress = 0
 let announcing = false
 let sliderTabs = {}
 let currentSlider = null
@@ -61,8 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('loading').classList.add('fadeOut')
         document.querySelector('.splide_sliders').classList.add('fadeInUp')
         
-        nowPlaying()
-        autoPlay()
         updateProgramObject().then(data => {
           programObject = data
           rotateBackgrounds()
@@ -83,6 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setInterval(nowPlaying, 10000)
         setInterval(rotateBackgrounds, 60000)
+        nowPlaying()
+        autoPlay()
       }
     }, 500)
   })
@@ -189,16 +190,28 @@ rotateBackgrounds = () => {
           programStarts.setHours(itemHourRange[0].split(':')[0])
           programStarts.setMinutes(itemHourRange[0].split(':')[1])
 
+          let programEnds = new Date(serverTime.y, serverTime.m, serverTime.d)
+          programEnds.setHours(itemHourRange[1].split(':')[0])
+          programEnds.setMinutes(itemHourRange[1].split(':')[1])
+
           if (time >= comingSoonLimit && time < from) {
             const diff = programStarts.getTime() - date.getTime()
             const min = Math.round(diff / 60000)
             comingSoon = stripTags(item.excerpt.rendered)
             comingSoon+= `(en ${min}m)`
           }
+
           if (time >= from && time <= to) { /* active program */
+            const duration = programEnds.getTime() - programStarts.getTime()
+            const elapsed = date.getTime() - programStarts.getTime()
+            const minDur = Math.round(duration / 60000)
+            const minEla = Math.round(elapsed / 60000)
+            const progress = Math.round(minEla / minDur * 100)
+
             programBackground = background
             programStyle = stripTags(item.content.rendered)
             programTitle = stripTags(item.excerpt.rendered)
+            programProgress = progress
           }
         }
       } else { /* defaults */          
@@ -261,7 +274,7 @@ announceProgram = (current, coming) => {
 
   if (current) {
     nowprogram.classList.remove('fadeOutUp', 'fadeInUp')
-    nowprogram.innerHTML = `<span class="mdi mdi-microphone-variant"></span> ${current}`
+    nowprogram.innerHTML = `<span class="mdi mdi-microphone-variant"></span> ${current} <div class="progress-container"><div class="progress"><div class="bar" style="width:${programProgress}%"></div></div></div>`
     nowplaying.style.display = 'none'
     nowprogram.style.display = 'block'
     nowprogram.classList.add('fadeInUp')
@@ -303,8 +316,10 @@ updateProgramObject = () => {
 showTab = id => {
 
   let active = document.querySelector('.splide_tabs > a.active')
+  let delay = 'delay3'
 
   if (currentSlider)  {
+    delay = ''
     currentSlider.destroy()
   }
 
@@ -314,7 +329,7 @@ showTab = id => {
 
   if (sliderTabs[id] && sliderTabs[id].items.length > minPostsSlider) {
     document.querySelector(`a[href="#${id}"]`).classList.add('active')
-    document.querySelector('.splide_sliders').innerHTML = `<div class="splide animated delay" id="${id}">
+    document.querySelector('.splide_sliders').innerHTML = `<div class="splide animated fadeInUp ${delay}" id="${id}">
   <div class="splide__track">
     <div class="splide__list"></div>
   </div>

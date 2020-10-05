@@ -1,68 +1,66 @@
+const streamURL = 'https://sonic.dattalive.com/8634/;'
+let audio = null
 let currentSong = null
-var audio = document.getElementById('stream')
-var playBtn = document.getElementById('playBtn')
-var programObject = {}
-var currentBackground = null
-var programTitle = null
-var comingSoon = null
-var comingSoonPreviewInterval = 15
-var programBackground = null
-var applyBackground = null
-var applyStyle = null
-var programStyle = null
-var defaultStyle = null
-var defaultBackground = null
-var currentStyle = null
-var programActive = false
-var announcing = false
+let playBtn = document.getElementById('playBtn')
+let programObject = {}
+let currentBackground = null
+let programTitle = null
+let comingSoon = null
+let comingSoonPreviewInterval = 15
+let programBackground = null
+let applyBackground = null
+let applyStyle = null
+let programStyle = null
+let defaultStyle = null
+let defaultBackground = null
+let currentStyle = null
+let programActive = false
+let announcing = false
+let sliderTabs = {}
+let currentSlider = null
+const minPostsSlider = 3
+const catIcons = {
+  programas: 'microphone-variant',
+  libros: 'book',
+  notas: 'rss'
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=14&_embed&per_page=100').then(res => {
-    const news = document.querySelector('.splide__list')
     Object.keys(res.data).forEach(i => {
       const item = res.data[i]
-      const excerpt = stripTags(item.excerpt.rendered)
-      news.innerHTML+= `<a href="${item.link}" class="splide__slide news-container" target="_blank"><div class="news-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="news-title"><h3>${item.title.rendered}</h3><p>${excerpt}</p></div></div></a>`
-    })
-    setTimeout(() => {
-      new Splide( '#news', {
-        type    : 'loop',
-        perPage : 7,
-        autoplay: true,
-        padding: {
-          right: '5rem',
-          left : '5rem',
-        },
-        breakpoints: {
-          '1600': {
-            perPage: 6
-          },
-          '1440': {
-            perPage: 5
-          },
-          '1366': {
-            perPage: 4
-          },
-          '1280': {
-            perPage: 4
-          },
-          '1024': {
-            perPage: 3
-          },
-          '640': {
-            perPage: 2
-          },
-          '480': {
-            perPage: 1
-          }
+      const slug = item._embedded['wp:term'][0][0].slug
+
+      if (!sliderTabs[slug]) {
+        const icon = catIcons[slug]
+        const name = item._embedded['wp:term'][0][0].name
+        
+        /* sliders object */
+        sliderTabs[slug] = {
+          name: name,
+          icon: icon,
+          items: []
         }
-      } ).mount();
+      }
+      sliderTabs[slug].items.push(item)
+    })
+
+    setTimeout(() => {
       if (document.getElementById('loading')) {
+
+        Object.keys(sliderTabs).filter( j => sliderTabs[j].items.length > minPostsSlider ).forEach(i => {
+        /* appends */
+        document.querySelector('.splide_tabs').innerHTML+= `<a href="#${i}" title="${sliderTabs[i].name}">
+  <span class="icon">
+    <span class="mdi mdi-${sliderTabs[i].icon}"></span>
+  </span>
+</a>`
+        })
+
         document.getElementById('app').classList.add('fadeIn')
         document.getElementById('loading').classList.add('fadeOut')
-        document.getElementById('news').classList.add('fadeInUp')
-        document.querySelector('.social').classList.add('fadeIn')
-
+        document.querySelector('.splide_sliders').classList.add('fadeInUp')
+        
         nowPlaying()
         autoPlay()
         updateProgramObject().then(data => {
@@ -71,7 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
         setTimeout(() => {
+          document.querySelector('.splide_tabs').classList.add('fadeInDown')
+          document.querySelector('.social').classList.add('fadeIn')
           document.getElementById('loading').remove()
+          if (!window.location.hash) {
+            showTab(Object.keys(sliderTabs)[0])  
+          } else {
+            showTab(window.location.hash.replace('#', ''))  
+          }
         }, 500)
 
         setInterval(() => {
@@ -90,12 +95,24 @@ document.addEventListener('DOMContentLoaded', () => {
 togglePlay = () => {
   const app = document.getElementById('app')
   if (!app.classList.contains('is-playing')) {
-    app.classList.add('is-playing')
+    createStreamConnection()
     audio.play()
+    app.classList.add('is-playing')
   } else {
-    audio.pause()
-    audio.currentTime = 0
+    audio.setAttribute('src', '')
+    audio.removeAttribute('src')
+    audio.load()
     app.classList.remove('is-playing')
+  }
+}
+
+createStreamConnection = () => {
+  if (!audio || audio.getAttribute('src') !== streamURL) {
+    audio = document.createElement('audio')
+    audio.setAttribute('src', streamURL)
+    audio.setAttribute('preload', 'none')
+    audio.setAttribute('type', 'audio/mp3')
+    audio.load()
   }
 }
 
@@ -104,6 +121,7 @@ playBtn.onclick = () => {
 }
 
 autoPlay = () => {
+  createStreamConnection()
   var promise = audio.play()
   const app = document.getElementById('app')
   if( typeof promise !== 'undefined' ) {
@@ -246,16 +264,16 @@ announceProgram = (current, coming) => {
   nowprogram.style.display = 'none'
 
   if (current) {
-    nowprogram.classList.remove('fadeOutUp', 'pulse')
+    nowprogram.classList.remove('fadeOutUp', 'fadeInUp')
     nowprogram.innerHTML = `<span class="mdi mdi-microphone-variant"></span> ${current}`
     nowplaying.style.display = 'none'
     nowprogram.style.display = 'block'
-    nowprogram.classList.add('pulse')
+    nowprogram.classList.add('fadeInUp')
   } 
 
   if (coming) {
     announcing = true
-    comingsoon.classList.remove('fadeOutUp', 'pulse')
+    comingsoon.classList.remove('fadeOut', 'pulse')
     comingsoon.innerHTML = `<span class="mdi mdi-clock-check-outline"></span> ${coming}`
     comingsoon.style.display = 'block'
     comingsoon.classList.add('pulse')
@@ -264,7 +282,7 @@ announceProgram = (current, coming) => {
 
     setTimeout(() => {
       comingsoon.classList.remove('pulse')
-      comingsoon.classList.add('fadeOutUp')
+      comingsoon.classList.add('fadeOut')
       setTimeout(() => {
         if (programActive) {
           nowprogram.style.display = 'block'
@@ -286,6 +304,72 @@ updateProgramObject = () => {
   })
 }
 
+showTab = id => {
+
+  let active = document.querySelector('.splide_tabs > a.active')
+
+  if (currentSlider)  {
+    currentSlider.destroy()
+  }
+
+  if (active) {
+    active.classList.remove('active')
+  }
+
+  if (sliderTabs[id] && sliderTabs[id].items.length > minPostsSlider) {
+    document.querySelector(`a[href="#${id}"]`).classList.add('active')
+    document.querySelector('.splide_sliders').innerHTML = `<div class="splide animated delay" id="${id}">
+  <div class="splide__track">
+    <div class="splide__list"></div>
+  </div>
+</div>`
+
+    sliderTabs[id].items.forEach(item => {
+      const excerpt = stripTags(item.excerpt.rendered)
+      document.getElementById(id).querySelector('.splide__list').innerHTML+= `<a href="${item.link}" class="splide__slide splide_sliders-container" target="_blank"><div class="splide_sliders-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="splide_sliders-title"><h3>${item.title.rendered}</h3><p>${excerpt}</p></div></div></a>`
+    })
+
+    currentSlider = new Splide( `#${id}`, {
+      type    : 'loop',
+      perPage : 7,
+      autoplay: true,
+      padding: {
+        right: '5rem',
+        left : '5rem',
+      },
+      breakpoints: {
+        '1600': {
+          perPage: 6
+        },
+        '1440': {
+          perPage: 5
+        },
+        '1366': {
+          perPage: 4
+        },
+        '1280': {
+          perPage: 4
+        },
+        '1024': {
+          perPage: 3
+        },
+        '640': {
+          perPage: 2
+        },
+        '480': {
+          perPage: 1
+        }
+      }
+    } ).mount()
+  }
+}
+
 stripTags = str => {
   return str.replace(/(<([^>]+)>)/ig, '')
 }
+
+hashChanged = () => {
+  showTab(window.location.hash.replace('#', ''))
+}
+
+window.addEventListener('hashchange', hashChanged)

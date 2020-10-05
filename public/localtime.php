@@ -1,5 +1,5 @@
 <?php 
-/*
+
 $time = (object) [
   'y' => date('Y'),
   'm' => date('m'),
@@ -8,8 +8,8 @@ $time = (object) [
   'i' => date('i'),
   'n' => date('N')
 ];
-*/
 
+/*
 $time = (object) [
   'y' => date('Y'),
   'm' => '10',
@@ -18,6 +18,6 @@ $time = (object) [
   'i' => '55',
   'n' => '4'
 ];
-
+*/
 
 echo json_encode($time);

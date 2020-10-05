@@ -170,9 +170,9 @@ audio {
 
 .splide_tabs > a {
   text-decoration: none;
-  min-width: 3rem;
+  min-width: 2rem;
   display: inline-block;
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin-left: 0.25rem;
   margin-right: 0.25rem;
   color: rgba(255,255,255,0.25);
@@ -183,11 +183,16 @@ audio {
   -moz-border-radius-topright: 10px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  transition: all 0.1s linear;
 }
 
 .splide_tabs > a.active {
   background-color: rgba(0,0,0,0.75);
   color: rgba(255,255,255,0.75);
+}
+
+.splide_tabs > a:hover {
+  color: rgba(255,255,255,0.75); 
 }
 
 .splide_sliders {

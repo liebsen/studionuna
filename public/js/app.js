@@ -72,11 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
           document.querySelector('.splide_tabs').classList.add('fadeInDown')
           document.querySelector('.social').classList.add('fadeIn')
           document.getElementById('loading').remove()
-          if (!window.location.hash) {
-            showTab(Object.keys(sliderTabs)[0])  
-          } else {
-            showTab(window.location.hash.replace('#', ''))  
-          }
+          hashChanged(window.location.hash)  
         }, 500)
 
         setInterval(() => {
@@ -369,7 +365,12 @@ stripTags = str => {
 }
 
 hashChanged = () => {
-  showTab(window.location.hash.replace('#', ''))
+  let hash = window.location.hash.replace('#', '')
+  if (Object.keys(sliderTabs).includes(hash)) {
+    showTab(hash)
+  } else {
+    showTab(Object.keys(sliderTabs)[0])
+  }
 }
 
 window.addEventListener('hashchange', hashChanged)

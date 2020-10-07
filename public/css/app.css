@@ -56,6 +56,7 @@ audio {
 .background,
 .overlay {
   position: absolute;
+  opacity: 0;
   width: 100%;
   height: calc(100% - 125px);
   display: flex;
@@ -160,40 +161,37 @@ audio {
 
 .splide_tabs {
   padding: 0.75rem;
+  padding-bottom: 0;
   opacity: 0;
-  position: relative;
+  position: absolute;
   z-index: 10;
   left: 0;
   right: 0;
-  top: -52px;
+  bottom: 125px;
   text-align: center;
 }
 
 .splide_tabs > a {
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  padding-bottom: 0.25rem;
   display: inline-block;
-  font-size: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 2rem;
   margin-left: 0.25rem;
   margin-right: 0.25rem;
   color: rgba(255,255,255,0.25);
   background-color: rgba(0,0,0,0.25);
-  -webkit-border-top-left-radius: 15px;
-  -webkit-border-top-right-radius: 15px;
-  -moz-border-radius-topleft: 15px;
-  -moz-border-radius-topright: 15px;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  -webkit-border-top-left-radius: 40px;
+  -webkit-border-top-right-radius: 40px;
+  -moz-border-radius-topleft: 40px;
+  -moz-border-radius-topright: 40px;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
   transition: all 0.1s linear;
 }
 
+.splide_tabs > a:hover,
 .splide_tabs > a.active {
-  background-color: #0278ae;
-  color: white;
-}
-
-.splide_tabs > a:hover {
   background-color: rgba(255,255,255,0.25);
   color: white; 
 }
@@ -231,8 +229,13 @@ audio {
   position: relative;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;
+  background-size: 100%;
+  transition: background-size 0.25s ease-in-out;
   height:125px;
+}
+
+.splide_sliders-item:hover {
+  background-size: 50%;
 }
 
 .splide_sliders-title {
@@ -260,6 +263,7 @@ audio {
 
 .social {
   position: relative;
+  opacity: 0;
   z-index: 2;
   display: flex;
   flex-direction: row;
@@ -396,7 +400,7 @@ audio {
 
 .splide__arrow {
   background: transparent!important;
-  fill: white;
+  fill: rgba(255,255,255,0.5);
   width: 3em!important;
   height: 3em!important;
 }
@@ -419,12 +423,12 @@ audio {
   width: 90%;
   height: 5px;
   overflow: hidden;
-  background: #e5e5e5;
+  background: #fff3;
   border-radius: 3px;
 }
 
 .bar {
-  transition: all 0.5s linear;
+  transition: width 15s linear;
   position: relative;
   float: left;
   min-width: 1%;
@@ -455,6 +459,11 @@ audio {
     margin-bottom: 1rem;
     line-height: 80px;
   }
+  .splide_tabs > a {
+    padding: 0.5rem 0.75rem;
+    padding-bottom: 0.25rem;
+    font-size: 1.5rem;
+  }
 }
 
 @media screen and (min-width:769px), print {
@@ -463,6 +472,10 @@ audio {
   }
   .foreground h1 {
     margin-top: 0;
+  }
+  .social > a {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
   }
 }
 
@@ -487,7 +500,8 @@ audio {
   .overlay {
     height: 100%;
   }
-  #notas {
+  .splide_tabs,
+  .splide_sliders {
     display: none;    
   }
 }

@@ -178,21 +178,24 @@ rotateBackgrounds = () => {
       if (itemProgram) {
         /* programs */
         let itemWeekDays = itemData[0].split(',')
+        let startHour = itemHourRange[0].split(':')[0]
+        let startMin = itemHourRange[0].split(':')[1]
 
+        let endHour = itemHourRange[1].split(':')[0]
+        let endMin = itemHourRange[1].split(':')[1]
+
+        let ends = itemHourRange[1]
         if (itemWeekDays.includes(weekDay)) {
 
           let programLimit = new Date(serverTime.y, serverTime.m, serverTime.d)
-          programLimit.setHours(itemHourRange[0].split(':')[0])
-          programLimit.setMinutes(itemHourRange[0].split(':')[1] - comingSoonPreviewInterval)
+          programLimit.setHours(startHour)
+          programLimit.setMinutes(startMin - comingSoonPreviewInterval)
           const comingSoonLimit = parseInt(`${programLimit.getHours()}${programLimit.getMinutes()}`)
 
           let programStarts = new Date(serverTime.y, serverTime.m, serverTime.d)
-          programStarts.setHours(itemHourRange[0].split(':')[0])
-          programStarts.setMinutes(itemHourRange[0].split(':')[1])
+          programStarts.setHours(startHour)
+          programStarts.setMinutes(startMin)
 
-          let programEnds = new Date(serverTime.y, serverTime.m, serverTime.d)
-          programEnds.setHours(itemHourRange[1].split(':')[0])
-          programEnds.setMinutes(itemHourRange[1].split(':')[1])
 
           if (time >= comingSoonLimit && time < from) {
             const diff = programStarts.getTime() - date.getTime()
@@ -202,6 +205,19 @@ rotateBackgrounds = () => {
           }
 
           if (time >= from && time <= to) { /* active program */
+
+            let day = serverTime.d
+
+            if (parseInt(endHour) < parseInt(startHour)) {
+              let then = new Date(serverTime.y, serverTime.m, serverTime.d)
+              then.setDate(then.getDate() + 1)
+              day = then.getDate()
+            }
+
+            let programEnds = new Date(serverTime.y, serverTime.m, day)
+            programEnds.setHours(endHour)
+            programEnds.setMinutes(endMin)
+
             const duration = programEnds.getTime() - programStarts.getTime()
             const elapsed = date.getTime() - programStarts.getTime()
             const minDur = Math.round(duration / 60000)
@@ -238,8 +254,8 @@ rotateBackgrounds = () => {
     if (applyBackground && currentBackground !== applyBackground) {
       div.classList.remove('fadeOut', 'fadeIn')
       div.classList.add('fadeOut')
-      div.style = ''
       setTimeout(() => {
+        div.style = ''
         if (applyStyle) {
           div.style = applyStyle
         }
@@ -281,27 +297,29 @@ announceProgram = (current, coming) => {
   } 
 
   if (coming) {
-    announcing = true
-    comingsoon.classList.remove('fadeOut', 'pulse')
-    comingsoon.innerHTML = `<span class="mdi mdi-clock-check-outline"></span> ${coming}`
-    comingsoon.style.display = 'block'
-    comingsoon.classList.add('pulse')
-    nowplaying.style.display = 'none'
-    nowprogram.style.display = 'none'
-
     setTimeout(() => {
-      comingsoon.classList.remove('pulse')
-      comingsoon.classList.add('fadeOut')
+      announcing = true
+      comingsoon.classList.remove('fadeOut', 'pulse')
+      comingsoon.innerHTML = `<span class="mdi mdi-clock-check-outline"></span> ${coming}`
+      comingsoon.style.display = 'block'
+      comingsoon.classList.add('pulse')
+      nowplaying.style.display = 'none'
+      nowprogram.style.display = 'none'
+
       setTimeout(() => {
-        if (programActive) {
-          nowprogram.style.display = 'block'
-        } else {
-          nowplaying.style.display = 'block'  
-        }        
-        comingsoon.style.display = 'none'
-        announcing = false
-      }, 1000)
-    }, 5000)    
+        comingsoon.classList.remove('pulse')
+        comingsoon.classList.add('fadeOut')
+        setTimeout(() => {
+          if (programActive) {
+            nowprogram.style.display = 'block'
+          } else {
+            nowplaying.style.display = 'block'  
+          }        
+          comingsoon.style.display = 'none'
+          announcing = false
+        }, 1000)
+      }, 5000)
+    }, 5000)
   } 
 }
 
@@ -350,28 +368,56 @@ showTab = id => {
       },
       breakpoints: {
         '1600': {
-          perPage: 6
+          perPage: 6,
+          padding: {
+            right: '5rem',
+            left : '5rem',
+          }
         },
         '1440': {
-          perPage: 5
+          perPage: 5,
+          padding: {
+            right: '5rem',
+            left : '5rem',
+          }
         },
         '1366': {
-          perPage: 4
+          perPage: 4,
+          padding: {
+            right: '3rem',
+            left : '3rem',
+          }
         },
         '1280': {
-          perPage: 4
+          perPage: 4,
+          padding: {
+            right: '4rem',
+            left : '4rem',
+          }
         },
         '1024': {
-          perPage: 3
+          perPage: 3,
+          padding: {
+            right: '0',
+            left : '0',
+          }
         },
         '640': {
-          perPage: 2
+          perPage: 2,
+          padding: {
+            right: '0',
+            left : '0',
+          }
         },
         '480': {
-          perPage: 1
+          perPage: 1,
+          padding: {
+            right: '0',
+            left : '0',
+          }
         }
       }
-    } ).mount()
+    }).mount()
   }
 }
 

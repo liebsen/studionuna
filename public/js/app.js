@@ -27,7 +27,7 @@ const catIcons = {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=14&_embed&per_page=100').then(res => {
+  axios.get('https://studionuna.com.ar/noticias/wp-json/wp/v2/posts?categories=14&_embed&per_page=100&orderby=parent&order=asc').then(res => {
     Object.keys(res.data).forEach(i => {
       const item = res.data[i]
       const slug = item._embedded['wp:term'][0][0].slug
@@ -131,22 +131,24 @@ autoPlay = () => {
 }
 
 nowPlaying = () => {
-  if (!announcing) {
-    axios.get('nowplaying.php').then(res => {
-      if (currentSong !== res.data) {
-        const nowplaying = document.querySelector('.nowplaying')
-        const headphones = '<span class="mdi mdi-headphones"></span> '
-        nowplaying.classList.remove('fadeInUp', 'fadeOutUp')
-        nowplaying.classList.add('fadeOutUp')
-        currentSong = res.data
-        setTimeout(() => {
+  setTimeout(() => {
+    if (!announcing) {
+      axios.get('nowplaying.php').then(res => {
+        if (currentSong !== res.data) {
+          const nowplaying = document.querySelector('.nowplaying')
+          const headphones = '<span class="mdi mdi-headphones"></span> '
           nowplaying.classList.remove('fadeInUp', 'fadeOutUp')
-          nowplaying.innerHTML = headphones + decodeURIComponent(res.data)
-          nowplaying.classList.add('fadeInUp')
-        }, 1000)
-      }
-    })
-  }
+          nowplaying.classList.add('fadeOutUp')
+          currentSong = res.data
+          setTimeout(() => {
+            nowplaying.classList.remove('fadeInUp', 'fadeOutUp')
+            nowplaying.innerHTML = headphones + decodeURIComponent(res.data)
+            nowplaying.classList.add('fadeInUp')
+          }, 1000)
+        }
+      })
+    }
+  }, 30000)
 }
 
 rotateBackgrounds = () => {
@@ -354,41 +356,19 @@ showTab = id => {
 </div>`
 
     sliderTabs[id].items.forEach(item => {
-      const excerpt = stripTags(item.excerpt.rendered)
-      document.getElementById(id).querySelector('.splide__list').innerHTML+= `<a href="${item.link}" class="splide__slide splide_sliders-container" target="_blank"><div class="splide_sliders-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="splide_sliders-title"><h3>${item.title.rendered}</h3><p>${excerpt}</p></div></div></a>`
+      document.getElementById(id).querySelector('.splide__list').innerHTML+= `<a href="${item.link}" class="splide__slide splide_sliders-container" target="_blank"><div class="splide_sliders-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="splide_sliders-title"><h3>${item.title.rendered}</h3><p>${stripTags(item.excerpt.rendered)}</p></div></div></a>`
     })
 
     currentSlider = new Splide( `#${id}`, {
       type    : 'loop',
-      perPage : 7,
+      perPage : 5,
       autoplay: true,
       padding: {
         right: '5rem',
         left : '5rem',
       },
       breakpoints: {
-        '1600': {
-          perPage: 6,
-          padding: {
-            right: '5rem',
-            left : '5rem',
-          }
-        },
-        '1440': {
-          perPage: 5,
-          padding: {
-            right: '5rem',
-            left : '5rem',
-          }
-        },
         '1366': {
-          perPage: 4,
-          padding: {
-            right: '3rem',
-            left : '3rem',
-          }
-        },
-        '1280': {
           perPage: 4,
           padding: {
             right: '4rem',

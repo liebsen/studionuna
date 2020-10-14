@@ -2,6 +2,8 @@ const streamURL = 'https://sonic.dattalive.com/8634/;'
 let audio = null
 let currentSong = null
 let playBtn = document.getElementById('playBtn')
+let app = document.getElementById('app')
+let offlineStatus = document.querySelector('.offline')
 let programObject = {}
 let currentBackground = null
 let programTitle = null
@@ -22,6 +24,7 @@ let currentSlider = null
 const minPostsSlider = 3
 const catIcons = {
   programas: 'microphone-variant',
+  editorial: 'feather',
   libros: 'book',
   notas: 'rss'
 }
@@ -33,64 +36,58 @@ document.addEventListener('DOMContentLoaded', () => {
       const slug = item._embedded['wp:term'][0][0].slug
 
       if (!sliderTabs[slug]) {
-        const icon = catIcons[slug]
-        const name = item._embedded['wp:term'][0][0].name
-        
         /* sliders object */
         sliderTabs[slug] = {
-          name: name,
-          icon: icon,
+          name: item._embedded['wp:term'][0][0].name,
+          icon: catIcons[slug],
           items: []
         }
       }
+
       sliderTabs[slug].items.push(item)
     })
 
     setTimeout(() => {
-      if (document.getElementById('loading')) {
-
-        Object.keys(sliderTabs).filter( j => sliderTabs[j].items.length > minPostsSlider ).forEach(i => {
-        /* appends */
-        document.querySelector('.splide_tabs').innerHTML+= `<a href="#${i}" title="${sliderTabs[i].name}">
-  <span class="icon">
-    <span class="mdi mdi-${sliderTabs[i].icon}"></span>
-  </span>
+      Object.keys(sliderTabs).filter( j => sliderTabs[j].items.length > minPostsSlider ).forEach(i => {
+      /* appends */
+      document.querySelector('.splide_tabs').innerHTML+= `<a href="#${i}" title="${sliderTabs[i].name}">
+<span class="icon">
+  <span class="mdi mdi-${sliderTabs[i].icon}"></span>
+</span>
 </a>`
-        })
+      })
 
-        document.getElementById('app').classList.add('fadeIn')
-        document.getElementById('loading').classList.add('fadeOut')
-        document.querySelector('.splide_sliders').classList.add('fadeInUp')
-        
+      app.classList.add('fadeIn')
+      document.getElementById('loading').classList.add('fadeOut')
+      document.querySelector('.splide_sliders').classList.add('fadeInUp')
+      
+      updateProgramObject().then(data => {
+        programObject = data
+        rotateBackgrounds()
+      })
+
+      setTimeout(() => {
+        document.querySelector('.splide_tabs').classList.add('fadeInDown')
+        document.querySelector('.social').classList.add('fadeIn')
+        document.getElementById('loading').remove()
+        hashChanged(window.location.hash)  
+      }, 500)
+
+      setInterval(() => {
         updateProgramObject().then(data => {
           programObject = data
-          rotateBackgrounds()
         })
+      }, 60000 * 60)
 
-        setTimeout(() => {
-          document.querySelector('.splide_tabs').classList.add('fadeInDown')
-          document.querySelector('.social').classList.add('fadeIn')
-          document.getElementById('loading').remove()
-          hashChanged(window.location.hash)  
-        }, 500)
-
-        setInterval(() => {
-          updateProgramObject().then(data => {
-            programObject = data
-          })
-        }, 60000 * 60)
-
-        setInterval(nowPlaying, 10000)
-        setInterval(rotateBackgrounds, 60000)
-        nowPlaying()
-        autoPlay()
-      }
+      setInterval(nowPlaying, 10000)
+      setInterval(rotateBackgrounds, 60000)
+      nowPlaying()
+      autoPlay()
     }, 500)
   })
 })
 
 togglePlay = () => {
-  const app = document.getElementById('app')
   if (!app.classList.contains('is-playing')) {
     createStreamConnection()
     audio.play()
@@ -120,7 +117,6 @@ playBtn.onclick = () => {
 autoPlay = () => {
   createStreamConnection()
   var promise = audio.play()
-  const app = document.getElementById('app')
   if( typeof promise !== 'undefined' ) {
     promise.then(() => {
       app.classList.add('is-playing')
@@ -356,7 +352,11 @@ showTab = id => {
 </div>`
 
     sliderTabs[id].items.forEach(item => {
-      document.getElementById(id).querySelector('.splide__list').innerHTML+= `<a href="${item.link}" class="splide__slide splide_sliders-container" target="_blank"><div class="splide_sliders-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="splide_sliders-title"><h3>${item.title.rendered}</h3><p>${stripTags(item.excerpt.rendered)}</p></div></div></a>`
+      let h3class = ''
+      if (item.title.rendered && item.title.rendered.length > 30) {
+        h3class = 'reduce'
+      }
+      document.getElementById(id).querySelector('.splide__list').innerHTML+= `<a href="${item.link}" class="splide__slide splide_sliders-container" target="_blank"><div class="splide_sliders-item" target="_blank" style="background-image: url('${item._embedded['wp:featuredmedia'][0].source_url}')"><div class="splide_sliders-title"><h3 class="${h3class}">${item.title.rendered}</h3><p>${stripTags(item.excerpt.rendered)}</p></div></div></a>`
     })
 
     currentSlider = new Splide( `#${id}`, {
@@ -415,3 +415,18 @@ hashChanged = () => {
 }
 
 window.addEventListener('hashchange', hashChanged)
+window.ononline = () => {
+  offlineStatus.classList.remove('fadeIn', 'fadeOut')
+  offlineStatus.classList.add('fadeOut')
+  if (!app.classList.contains('is-playing')) {
+    togglePlay()
+  }
+}
+
+window.onoffline = () => {
+  offlineStatus.classList.remove('fadeIn', 'fadeOut')
+  offlineStatus.classList.add('fadeIn')
+  if (app.classList.contains('is-playing')) {
+    togglePlay()
+  }
+}

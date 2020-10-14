@@ -167,7 +167,7 @@ audio {
   z-index: 10;
   left: 0;
   right: 0;
-  bottom: 125px;
+  bottom: 126px;
   text-align: center;
 }
 
@@ -223,6 +223,7 @@ audio {
 
 .splide_sliders-container:hover .splide_sliders-title h3 {
   color: yellow;
+  min-height: 1.5rem;
 }
 
 .splide_sliders-item {
@@ -235,7 +236,7 @@ audio {
 }
 
 .splide_sliders-item:hover {
-  background-size: 50%;
+  background-size: 75%;
 }
 
 .splide_sliders-title {
@@ -258,6 +259,7 @@ audio {
 .splide_sliders-title p {
   margin-top: 0;
   font-size: 0.75rem;
+  margin-bottom: 0.25rem;
   color: white;
 }
 
@@ -436,6 +438,17 @@ audio {
   background: #0c9463;
 }
 
+.reduce {
+  font-size: 85%;
+}
+
+.offline {
+  opacity: 0;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #ec0101;
+}
 
 /* responsive */
 

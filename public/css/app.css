@@ -442,12 +442,19 @@ audio {
   font-size: 85%;
 }
 
-.offline {
+.inetstatus {
   opacity: 0;
   position: absolute;
   z-index: 40;
   top: 1rem;
   right: 1rem;
+}
+
+.inetstatus .mdi-router-wireless {
+  color: #79d70f;
+}
+
+.inetstatus .mdi-router-wireless-off {
   color: #ec0101;
 }
 

@@ -3,7 +3,7 @@ let audio = null
 let currentSong = null
 let playBtn = document.getElementById('playBtn')
 let app = document.getElementById('app')
-let offlineStatus = document.querySelector('.offline')
+let inetStatus = document.querySelector('.inetstatus')
 let programObject = {}
 let currentBackground = null
 let programTitle = null
@@ -24,9 +24,10 @@ let currentSlider = null
 const minPostsSlider = 3
 const catIcons = {
   programas: 'microphone-variant',
-  editorial: 'feather',
   libros: 'book',
-  notas: 'rss'
+  notas: 'rss',
+  // especiales: 'flash',
+  editorial: 'feather'
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -48,13 +49,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     setTimeout(() => {
-      Object.keys(sliderTabs).filter( j => sliderTabs[j].items.length > minPostsSlider ).forEach(i => {
-      /* appends */
-      document.querySelector('.splide_tabs').innerHTML+= `<a href="#${i}" title="${sliderTabs[i].name}">
-<span class="icon">
+      Object.keys(sliderTabs).filter( j => sliderTabs[j].items.length > minPostsSlider ).forEach((i, j) => {
+        /* appends */
+        let tabItem = document.createElement('a')
+        tabItem.setAttribute('href', `#${i}`)
+        tabItem.setAttribute('title', sliderTabs[i].name)
+        tabItem.innerHTML = `<span class="icon">
   <span class="mdi mdi-${sliderTabs[i].icon}"></span>
-</span>
-</a>`
+</span>`
+        let index = 0
+        Object.keys(catIcons).filter((e, a) => {
+          if (i === e) {
+            index = a
+          }
+        })
+        document.querySelector('.splide_tabs').insertBefore(tabItem, document.querySelector('.splide_tabs').children[index])
       })
 
       app.classList.add('fadeIn')
@@ -205,7 +214,11 @@ rotateBackgrounds = () => {
             const diff = programStarts.getTime() - date.getTime()
             const min = Math.round(diff / 60000)
             comingSoon = stripTags(item.excerpt.rendered)
-            comingSoon+= `(en ${min}m)`
+            if (min < 2) {
+              comingSoon+= `(ya llega)`
+            } else {
+              comingSoon+= `(en ${min}m)`
+            }
           }
 
           if (date >= programStarts && date <= programEnds) { /* active program */
@@ -412,16 +425,20 @@ hashChanged = () => {
 
 window.addEventListener('hashchange', hashChanged)
 window.ononline = () => {
-  offlineStatus.classList.remove('fadeIn', 'fadeOut')
-  offlineStatus.classList.add('fadeOut')
+  inetStatus.querySelector('.mdi-router-wireless-off').style.display = 'none'
+  inetStatus.querySelector('.mdi-router-wireless').style.display = 'block'
+  inetStatus.classList.remove('fadeIn', 'fadeOut')
+  inetStatus.classList.add('fadeOut')
   if (!app.classList.contains('is-playing')) {
     togglePlay()
   }
 }
 
 window.onoffline = () => {
-  offlineStatus.classList.remove('fadeIn', 'fadeOut')
-  offlineStatus.classList.add('fadeIn')
+  inetStatus.querySelector('.mdi-router-wireless').style.display = 'none'
+  inetStatus.querySelector('.mdi-router-wireless-off').style.display = 'block'
+  inetStatus.classList.remove('fadeIn', 'fadeOut')
+  inetStatus.classList.add('fadeIn')
   if (app.classList.contains('is-playing')) {
     togglePlay()
   }

@@ -15,8 +15,8 @@ $time = (object) [
   'y' => date('Y'),
   'm' => date('m'),
   'd' => '15', // date('d')
-  'h' => '00', // date('H')
-  'i' => '01', // date('i')
+  'h' => '20', // date('H')
+  'i' => '50', // date('i')
   'n' => '4' // date('N')
 ];
 

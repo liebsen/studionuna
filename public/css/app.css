@@ -445,6 +445,7 @@ audio {
 .offline {
   opacity: 0;
   position: absolute;
+  z-index: 40;
   top: 1rem;
   right: 1rem;
   color: #ec0101;

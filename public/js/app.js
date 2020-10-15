@@ -164,37 +164,43 @@ rotateBackgrounds = () => {
       const itemHourRange = itemData[1].split('-')  
       let from = parseInt(itemHourRange[0].replace(':', ''))
       let to = parseInt(itemHourRange[1].replace(':', ''))
+      let itemWeekDays = itemData[0].split(',')
+      let startHour = itemHourRange[0].split(':')[0]
+      let startMin = itemHourRange[0].split(':')[1]
+      let endHour = itemHourRange[1].split(':')[0]
+      let endMin = itemHourRange[1].split(':')[1]
+      let ends = itemHourRange[1]
+      let programLimit = new Date(serverTime.y, serverTime.m, serverTime.d)
 
-      if (to < from) {
-        if (time >= to) {
-          to+= from + 100
-        } else {
-          from= 0
-        }
+      programLimit.setHours(startHour)
+      programLimit.setMinutes(startMin - comingSoonPreviewInterval)
+
+      const comingSoonLimit = parseInt(`${programLimit.getHours()}${programLimit.getMinutes()}`)
+      let programStarts = new Date(serverTime.y, serverTime.m, serverTime.d)
+      programStarts.setHours(startHour)
+      programStarts.setMinutes(startMin)
+      let day = serverTime.d
+
+      if (parseInt(endHour) < parseInt(startHour)) {
+        let then = new Date(serverTime.y, serverTime.m, serverTime.d)
+        then.setDate(then.getDate() + 1)
+        day = then.getDate()
       }
+
+      let programEnds = new Date(serverTime.y, serverTime.m, day)
+
+      programEnds.setHours(endHour)
+      programEnds.setMinutes(endMin)
+
+      const duration = programEnds.getTime() - programStarts.getTime()
+      const elapsed = date.getTime() - programStarts.getTime()
+      const minDur = Math.round(duration / 60000)
+      const minEla = Math.round(elapsed / 60000)
+      const progress = Math.round(minEla / minDur * 100)
 
       if (itemProgram) {
         /* programs */
-        let itemWeekDays = itemData[0].split(',')
-        let startHour = itemHourRange[0].split(':')[0]
-        let startMin = itemHourRange[0].split(':')[1]
-
-        let endHour = itemHourRange[1].split(':')[0]
-        let endMin = itemHourRange[1].split(':')[1]
-
-        let ends = itemHourRange[1]
         if (itemWeekDays.includes(weekDay)) {
-
-          let programLimit = new Date(serverTime.y, serverTime.m, serverTime.d)
-          programLimit.setHours(startHour)
-          programLimit.setMinutes(startMin - comingSoonPreviewInterval)
-          const comingSoonLimit = parseInt(`${programLimit.getHours()}${programLimit.getMinutes()}`)
-
-          let programStarts = new Date(serverTime.y, serverTime.m, serverTime.d)
-          programStarts.setHours(startHour)
-          programStarts.setMinutes(startMin)
-
-
           if (time >= comingSoonLimit && time < from) {
             const diff = programStarts.getTime() - date.getTime()
             const min = Math.round(diff / 60000)
@@ -202,26 +208,7 @@ rotateBackgrounds = () => {
             comingSoon+= `(en ${min}m)`
           }
 
-          if (time >= from && time <= to) { /* active program */
-
-            let day = serverTime.d
-
-            if (parseInt(endHour) < parseInt(startHour)) {
-              let then = new Date(serverTime.y, serverTime.m, serverTime.d)
-              then.setDate(then.getDate() + 1)
-              day = then.getDate()
-            }
-
-            let programEnds = new Date(serverTime.y, serverTime.m, day)
-            programEnds.setHours(endHour)
-            programEnds.setMinutes(endMin)
-
-            const duration = programEnds.getTime() - programStarts.getTime()
-            const elapsed = date.getTime() - programStarts.getTime()
-            const minDur = Math.round(duration / 60000)
-            const minEla = Math.round(elapsed / 60000)
-            const progress = Math.round(minEla / minDur * 100)
-
+          if (date >= programStarts && date <= programEnds) { /* active program */
             programBackground = background
             programStyle = stripTags(item.content.rendered)
             programTitle = stripTags(item.excerpt.rendered)
@@ -229,6 +216,15 @@ rotateBackgrounds = () => {
           }
         }
       } else { /* defaults */          
+
+        if (to < from) {
+          if (time >= to) {
+            to+= from + 100
+          } else {
+            from= 0
+          }
+        }
+
         if (time >= from && time <= to || from === to) {
           defaultBackground = background
           defaultStyle = stripTags(item.content.rendered)

@@ -11,40 +11,12 @@
   <meta property="og:url" content="https://studionuna.com.ar" />
   <meta property="og:image" content="https://studionuna.com.ar/img/share.jpg" />
   <meta property="og:description" content="Difusión de contenido" /> 
-  <link rel="stylesheet" type="text/css" href="/css/app.css" />
+  <link rel="stylesheet" type="text/css" href="/css/app3.css" />
   <link rel="stylesheet" type="text/css" href="/css/splide.min.css" />
   <link rel="stylesheet" type="text/css" href="/css/animate.css" />
   <link rel="stylesheet" type="text/css" href="/css/materialdesignicons.min.css" />
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172661957-1"></script>
   <script>
-
-    function getParameterByName(name, url) {
-      if (!url) url = window.location.href;
-      name = name.replace(/[\[\]]/g, '\\$&');
-      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-          results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
-
-    function loadjscssfile(filename, filetype){
-        if (filetype=="js"){ //if filename is a external JavaScript file
-            var fileref=document.createElement('script')
-            fileref.setAttribute("type","text/javascript")
-            fileref.setAttribute("src", filename)
-        }
-        else if (filetype=="css"){ //if filename is an external CSS file
-            var fileref=document.createElement("link")
-            fileref.setAttribute("rel", "stylesheet")
-            fileref.setAttribute("type", "text/css")
-            fileref.setAttribute("href", filename)
-        }
-        if (typeof fileref!="undefined")
-            document.getElementsByTagName("head")[0].appendChild(fileref)
-    }
-
-
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
@@ -60,7 +32,7 @@
   </div>
   <div id="app">
     <div class="foreground">
-      <h1 class="title">Studio Nuna</h1>
+      <h1 class="title">Studio nuna</h1>
       <div class="icon pointer" id="playBtn">
         <span class="mdi mdi-power"></span>
       </div>
@@ -105,7 +77,12 @@
           <span class="mdi mdi-spotify"></span>
         </span>
       </a>
-      <a href="https://studionuna.com.ar/noticias" target="_blank" title="Nuestro blog">
+      <a href="https://twitter.com/nuna_studio" target="_blank" title="Seguinos en Twitter">
+        <span class="icon pointer">
+          <span class="mdi mdi-twitter"></span>
+        </span>
+      </a>
+      <!--a href="https://studionuna.com.ar/noticias" target="_blank" title="Nuestro blog">
         <span class="icon pointer">
           <span class="mdi mdi-wordpress"></span>
         </span>
@@ -114,10 +91,10 @@
         <span class="icon pointer">
           <span class="mdi mdi-room-service"></span>
         </span>
-      </a>
+      </a-->
       <a href="mailto:studiosnuna@gmail.com" title="Envianos un email">
         <span class="icon pointer">
-          <span class="mdi mdi-chat"></span>
+          <span class="mdi mdi-email-edit-outline"></span>
         </span>
       </a>
       <!--a href="mailto:studiosnuna@gmail.com" title="Envianos un email">
@@ -126,7 +103,11 @@
         </span>
       </a-->
     </div>
-    <div class="logo"></div>
+    <div class="logo animated"></div>
+    <div class="inetstatus animated">
+      <span class="mdi mdi-router-wireless mdi-48px"></span>
+      <span class="mdi mdi-router-wireless-off mdi-48px"></span>
+    </div>
     <div class="overlay"></div>
     <div class="background animated"></div>
   </div>
@@ -136,16 +117,6 @@
   <script src="/js/splide.min.js"></script>
   <script src="/js/pwa.js"></script>
   <script src="/js/status.js"></script>
-  <script src="/js/app.js"></script>
-  <script>
-    let font = getParameterByName('font')
-    if (font) {
-      console.log(font)
-      let body = document.getElementsByTagName('body')[0]
-      loadjscssfile(`https://fonts.googleapis.com/css2?family=${font}&display=swap`, 'css')
-      body.style.fontFamily = font.replace('+', ' ')
-    }
-
-  </script>
+  <script src="/js/app3.js"></script>
 </body>
 </html>
